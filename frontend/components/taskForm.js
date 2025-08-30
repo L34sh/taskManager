@@ -1,7 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 
-export default function TaskForm({ refreshTasks }) {
+export default function TaskForm({ isOpen, onClose, refreshTasks }) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [status, setStatus] = useState("pending");
@@ -13,51 +13,71 @@ export default function TaskForm({ refreshTasks }) {
     setDescription("");
     setStatus("pending");
     refreshTasks();
+    onClose();
   };
 
+  if (!isOpen) return null;
+
   return (
-    <form onSubmit={handleSubmit} className="p-6 bg-white shadow-lg rounded-lg mb-6 max-w-2xl mx-auto">
-      <h2 className="text-2xl font-semibold mb-4 text-gray-800">Add New Task</h2>
-      <div className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
-          <input 
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" 
-            placeholder="Enter task title" 
-            value={title} 
-            onChange={(e) => setTitle(e.target.value)} 
-            required
-          />
+    <div className="modal d-block" style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
+      <div className="modal-dialog modal-dialog-centered">
+        <div className="modal-content">
+          <div className="modal-header border-0">
+            <h5 className="modal-title" style={{ color: '#6f42c1' }}>Add Task</h5>
+            <button type="button" className="btn-close" onClick={onClose}></button>
+          </div>
+          <div className="modal-body">
+            <form onSubmit={handleSubmit}>
+              <div className="mb-3">
+                <input 
+                  className="form-control" 
+                  placeholder="Title" 
+                  value={title} 
+                  onChange={(e) => setTitle(e.target.value)} 
+                  required
+                />
+              </div>
+              <div className="mb-3">
+                <textarea 
+                  className="form-control" 
+                  placeholder="Enter Description" 
+                  value={description} 
+                  onChange={(e) => setDescription(e.target.value)}
+                  required
+                  rows="4"
+                />
+              </div>
+              <div className="mb-4">
+                <select 
+                  className="form-select"
+                  value={status}
+                  onChange={(e) => setStatus(e.target.value)}
+                >
+                  <option value="pending">Pending</option>
+                  <option value="in-progress">In Progress</option>
+                  <option value="completed">Completed</option>
+                </select>
+              </div>
+              <div className="d-flex gap-2">
+                <button 
+                  type="submit" 
+                  className="btn btn-primary flex-grow-1"
+                  style={{ backgroundColor: '#6f42c1', borderColor: '#6f42c1' }}
+                >
+                  Confirm
+                </button>
+                <button 
+                  type="button"
+                  onClick={onClose}
+                  className="btn btn-light flex-grow-1"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
-          <textarea 
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors min-h-[100px]" 
-            placeholder="Enter task description" 
-            value={description} 
-            onChange={(e) => setDescription(e.target.value)}
-            required
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
-          <select 
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-            value={status}
-            onChange={(e) => setStatus(e.target.value)}
-          >
-            <option value="pending">Pending</option>
-            <option value="in-progress">In Progress</option>
-            <option value="completed">Completed</option>
-          </select>
-        </div>
-        <button 
-          type="submit" 
-          className="w-full bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors font-medium"
-        >
-          Add Task
-        </button>
       </div>
-    </form>
+    </div>
   );
 }
